@@ -1,4 +1,4 @@
-package handler
+package error
 
 import (
 	"github.com/labstack/echo"
@@ -18,4 +18,12 @@ func JSONHTTPErrorHandler(err error, c echo.Context) {
 			"message":    msg,
 		})
 	}
+}
+
+func GetJSONError(statusCode int) map[string]interface{} {
+	jsonError := map[string]interface{}{
+		"statusCode": statusCode,
+		"message":    fasthttp.StatusMessage(statusCode),
+	}
+	return jsonError
 }

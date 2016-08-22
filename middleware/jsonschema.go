@@ -1,30 +1,36 @@
 package middleware
 
 import (
+	"strconv"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/labstack/echo"
 	"github.com/valyala/fasthttp"
 	"github.com/xeipuuv/gojsonschema"
 
 	"turntable-build/jsonschema"
+	twerr "turntable-build/error"
 )
 
-func JsonschemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc {
+func JSONSchemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return echo.HandlerFunc(func(c echo.Context) error {
 			// Define schema
 			apiSchema, ok := schemaMapper[c.Path()].(jsonschema.APISchema)
 			if !ok {
-				logrus.Debug("aaerror--------", c.Path())
+				logrus.Error("Dose not exsit SchemaMapper: ", c.Path())
+				jsonError := twerr.GetJSONError(fasthttp.StatusNotFound)
+				return c.JSON(fasthttp.StatusNotFound, jsonError)
 			}
 
 			// Request validate check
 			reqSchema := apiSchema.GetRequestSchema()
 			reqContext := createRequestContext(c)
-			if err := validate(reqSchema, reqContext); err != nil {
-				logrus.Debug("Request validate error", err)
-				return err
+			if result := validate(reqSchema, reqContext); result != true {
+				logrus.Error("Request validate error")
+				jsonError := twerr.GetJSONError(fasthttp.StatusForbidden)
+				return c.JSON(fasthttp.StatusForbidden, jsonError)
 			}
 
 			// Execute echo handler
@@ -35,9 +41,10 @@ func JsonschemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc 
 			// Response validate check
 			resSchema := apiSchema.GetResponseSchema()
 			resContext := c.Get("context")
-			if err := validate(resSchema, resContext); err != nil {
-				logrus.Debug("Response validate error", err)
-				return err
+			if result := validate(resSchema, resContext); result != true {
+				logrus.Error("Response validate error")
+				jsonError := twerr.GetJSONError(fasthttp.StatusInternalServerError)
+				return c.JSON(fasthttp.StatusInternalServerError, jsonError)
 			}
 
 			return c.JSON(fasthttp.StatusOK, resContext)
@@ -45,24 +52,23 @@ func JsonschemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc 
 	}
 }
 
-func validate(schema interface{}, context interface{}) error {
+func validate(schema interface{}, context interface{}) bool {
 	schemaLoader := gojsonschema.NewGoLoader(schema)
 	contextLoader := gojsonschema.NewGoLoader(context)
 
 	result, err := gojsonschema.Validate(schemaLoader, contextLoader)
 	if err != nil {
-		logrus.Debug("JsonSchema Validate Error:", err)
+		logrus.Error("JsonSchema Validate Error:", err)
 		panic(err.Error())
 	}
 	if !result.Valid() {
-		logrus.Debug("The document is not valid. see errors")
+		logrus.Error("The document is not valid. see errors")
 		for _, err := range result.Errors() {
 			// Err implements the ResultError interface
-			logrus.Debug("- ", err)
+			logrus.Error("- ", err)
 		}
-		return nil
 	}
-	return nil
+	return result.Valid()
 }
 
 func createRequestContext(c echo.Context) map[string]interface{} {
@@ -71,7 +77,12 @@ func createRequestContext(c echo.Context) map[string]interface{} {
 	switch c.Request().Method() {
 	case echo.GET:
 		for _, n := range c.ParamNames() {
-			mapList[n] = c.Param(n)
+			val, err := strconv.ParseInt(c.Param(n), 0, 64)
+			if err != nil {
+				mapList[n] = c.Param(n)
+			} else {
+				mapList[n] = val
+			}
 		}
 	case echo.POST:
 	case echo.PUT:

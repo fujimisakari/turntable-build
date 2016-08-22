@@ -14,7 +14,7 @@ func (s GetArtisteAPISchema)GetRequestSchema() map[string]interface{} {
 		"type":        "object",
 		"properties": map[string]interface{}{
 			"id": map[string]string{
-				"type": "string",
+				"type": "integer",
 			},
 		},
 		"required": []string{

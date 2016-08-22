@@ -6,7 +6,7 @@ import (
 
 	"turntable-build/api"
 	"turntable-build/db"
-	"turntable-build/handler"
+	tberr "turntable-build/error"
 	"turntable-build/jsonschema"
 	tbMw "turntable-build/middleware"
 )
@@ -24,10 +24,10 @@ func Init() *echo.Echo {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAcceptEncoding},
 	}))
-	e.SetHTTPErrorHandler(handler.JSONHTTPErrorHandler)
+	e.SetHTTPErrorHandler(tberr.JSONHTTPErrorHandler)
 
 	// Set Custom MiddleWare
-	e.Use(tbMw.JsonschemaHandler(jsonschema.GetSchemaMapper()))
+	e.Use(tbMw.JSONSchemaHandler(jsonschema.GetSchemaMapper()))
 	e.Use(tbMw.TransactionHandler(db.Init()))
 
 	// Routes
