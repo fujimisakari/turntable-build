@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/Sirupsen/logrus"
@@ -8,8 +9,8 @@ import (
 	"github.com/valyala/fasthttp"
 	"github.com/xeipuuv/gojsonschema"
 
-	"turntable-build/jsonschema"
 	twerr "turntable-build/error"
+	"turntable-build/jsonschema"
 )
 
 func JSONSchemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc {
@@ -27,22 +28,27 @@ func JSONSchemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc 
 			// Request validate check
 			reqSchema := apiSchema.GetRequestSchema()
 			reqContext := createRequestContext(c)
-			if result := validate(reqSchema, reqContext); result != true {
+			if result, msg := validate(reqSchema, reqContext); result != true {
 				logrus.Error("Request validate error")
+				fmt.Printf("%+v\n", msg)
 				jsonError := twerr.GetJSONError(fasthttp.StatusForbidden)
 				return c.JSON(fasthttp.StatusForbidden, jsonError)
 			}
 
 			// Execute echo handler
 			if err := next(c); err != nil {
-				return err
+				jsonError := twerr.GetJSONError(fasthttp.StatusInternalServerError)
+				jsonError["message"] = err.Error()
+				fmt.Printf("%+v\n", err)
+				return c.JSON(fasthttp.StatusInternalServerError, jsonError)
 			}
 
 			// Response validate check
 			resSchema := apiSchema.GetResponseSchema()
 			resContext := c.Get("context")
-			if result := validate(resSchema, resContext); result != true {
+			if result, msg := validate(resSchema, resContext); result != true {
 				logrus.Error("Response validate error")
+				fmt.Printf("%+v\n", msg)
 				jsonError := twerr.GetJSONError(fasthttp.StatusInternalServerError)
 				return c.JSON(fasthttp.StatusInternalServerError, jsonError)
 			}
@@ -52,23 +58,24 @@ func JSONSchemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc 
 	}
 }
 
-func validate(schema interface{}, context interface{}) bool {
+func validate(schema interface{}, context interface{}) (bool, string) {
 	schemaLoader := gojsonschema.NewGoLoader(schema)
 	contextLoader := gojsonschema.NewGoLoader(context)
 
 	result, err := gojsonschema.Validate(schemaLoader, contextLoader)
 	if err != nil {
 		logrus.Error("JsonSchema Validate Error:", err)
-		panic(err.Error())
 	}
+
+	var msg string
 	if !result.Valid() {
-		logrus.Error("The document is not valid. see errors")
+		msg += "The Json is not valid. see errors"
 		for _, err := range result.Errors() {
 			// Err implements the ResultError interface
-			logrus.Error("- ", err)
+			msg += fmt.Sprintf("\n- %s", err)
 		}
 	}
-	return result.Valid()
+	return result.Valid(), msg
 }
 
 func createRequestContext(c echo.Context) map[string]interface{} {

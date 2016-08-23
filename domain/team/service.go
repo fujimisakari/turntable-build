@@ -1,26 +1,24 @@
 package domain
 
 import (
-	"github.com/Sirupsen/logrus"
 	"github.com/gocraft/dbr"
+	"github.com/pkg/errors"
 
 	"turntable-build/model"
 )
 
-func GetTeam(tx *dbr.Tx, id int64) *model.Team {
+func GetTeam(tx *dbr.Tx, id int64) (*model.Team, error) {
 	team := new(model.Team)
 	if err := team.LoadByID(tx, id); err != nil {
-		logrus.Debug(err)
-		// return echo.NewHTTPError(fasthttp.StatusNotFound, "Member does not exists.")
+		return nil, errors.Errorf("Team does not exists: %d", id)
 	}
-	return team
+	return team, nil
 }
 
-func GetTeamAll(tx *dbr.Tx) *model.Teams {
+func GetTeamAll(tx *dbr.Tx) (*model.Teams, error) {
 	teams := new(model.Teams)
 	if err := teams.LoadAll(tx); err != nil {
-		logrus.Debug(err)
-		// return echo.NewHTTPError(fasthttp.StatusNotFound, "Member does not exists.")
+		return nil, errors.New("Teams does not exists")
 	}
-	return teams
+	return teams, nil
 }

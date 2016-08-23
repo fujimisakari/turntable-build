@@ -16,8 +16,14 @@ func GetArtiste() echo.HandlerFunc {
 		id, _ := strconv.ParseInt(c.Param("id"), 0, 64)
 		tx := c.Get("Tx").(*dbr.Tx)
 
-		artiste := dm_art.GetArtiste(tx, id)
-		team := dm_team.GetTeam(tx, artiste.TeamID)
+		artiste, err := dm_art.GetArtiste(tx, id)
+		if err != nil {
+			return err
+		}
+		team, err := dm_team.GetTeam(tx, artiste.TeamID)
+		if err != nil {
+			return err
+		}
 
 		context := map[string]interface{}{
 			"artiste": artiste.ToMap(),
@@ -32,7 +38,10 @@ func GetArtisteAll() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		tx := c.Get("Tx").(*dbr.Tx)
 
-		artistes := dm_art.GetArtisteAll(tx)
+		artistes, err := dm_art.GetArtisteAll(tx)
+		if err != nil {
+			return err
+		}
 
 		context := map[string]interface{}{
 			"artistes": artistes.ToMapList(),

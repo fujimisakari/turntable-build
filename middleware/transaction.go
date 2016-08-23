@@ -23,7 +23,7 @@ func TransactionHandler(db *dbr.Session) echo.MiddlewareFunc {
 				logrus.Debug("Transction Rollback: ", err)
 				return err
 			}
-			logrus.Debug("Transaction Commit")
+			// logrus.Debug("Transaction Commit")
 			tx.Commit()
 
 			return nil

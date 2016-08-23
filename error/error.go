@@ -1,6 +1,8 @@
 package error
 
 import (
+	"strconv"
+
 	"github.com/labstack/echo"
 	"github.com/valyala/fasthttp"
 )
@@ -20,9 +22,9 @@ func JSONHTTPErrorHandler(err error, c echo.Context) {
 	}
 }
 
-func GetJSONError(statusCode int) map[string]interface{} {
-	jsonError := map[string]interface{}{
-		"statusCode": statusCode,
+func GetJSONError(statusCode int) map[string]string {
+	jsonError := map[string]string{
+		"statusCode": strconv.Itoa(statusCode),
 		"message":    fasthttp.StatusMessage(statusCode),
 	}
 	return jsonError
