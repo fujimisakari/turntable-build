@@ -4,10 +4,9 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/fujimisakari/turntable-build/conf"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gocraft/dbr"
-
-	"turntable-build/conf"
 )
 
 func Init() *dbr.Session {

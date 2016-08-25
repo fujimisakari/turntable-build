@@ -1,10 +1,14 @@
+/*
+
+This code has been created automatically
+
+*/
 package domain
 
 import (
+	"github.com/fujimisakari/turntable-build/model"
 	"github.com/gocraft/dbr"
 	"github.com/pkg/errors"
-
-	"turntable-build/model"
 )
 
 func GetArtiste(tx *dbr.Tx, id int64) (*model.Artiste, error) {

@@ -1,0 +1,22 @@
+schema:
+  name: Artiste
+  description: "Artiste info api"
+
+  columns:
+    - db-column-name: id
+      model-name: ID
+      model-type: int64
+      json-name: id
+      json-type: integer
+
+    - db-column-name: name
+      model-name: Name
+      model-type: string
+      json-name: name
+      json-type: string
+
+    - db-column-name: team_id
+      model-name: TeamID
+      model-type: int64
+      json-name:
+      json-type:

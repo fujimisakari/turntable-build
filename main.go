@@ -4,9 +4,8 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/fujimisakari/turntable-build/route"
 	"github.com/labstack/echo/engine/fasthttp"
-
-	"turntable-build/route"
 )
 
 func init() {

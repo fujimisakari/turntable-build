@@ -4,11 +4,10 @@ import (
 	"strconv"
 
 	_ "github.com/Sirupsen/logrus"
+	dm_art "github.com/fujimisakari/turntable-build/domain/artiste"
+	dm_team "github.com/fujimisakari/turntable-build/domain/team"
 	"github.com/gocraft/dbr"
 	"github.com/labstack/echo"
-
-	dm_art "turntable-build/domain/artiste"
-	dm_team "turntable-build/domain/team"
 )
 
 func GetArtiste() echo.HandlerFunc {

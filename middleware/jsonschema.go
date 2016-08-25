@@ -5,12 +5,11 @@ import (
 	"strconv"
 
 	"github.com/Sirupsen/logrus"
+	twerr "github.com/fujimisakari/turntable-build/error"
+	"github.com/fujimisakari/turntable-build/jsonschema"
 	"github.com/labstack/echo"
 	"github.com/valyala/fasthttp"
 	"github.com/xeipuuv/gojsonschema"
-
-	twerr "turntable-build/error"
-	"turntable-build/jsonschema"
 )
 
 func JSONSchemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc {

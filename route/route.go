@@ -1,13 +1,12 @@
 package route
 
 import (
+	"github.com/fujimisakari/turntable-build/api"
+	"github.com/fujimisakari/turntable-build/db"
+	tberr "github.com/fujimisakari/turntable-build/error"
+	"github.com/fujimisakari/turntable-build/jsonschema"
 	"github.com/labstack/echo"
 	echoMw "github.com/labstack/echo/middleware"
-
-	"turntable-build/api"
-	"turntable-build/db"
-	tberr "turntable-build/error"
-	"turntable-build/jsonschema"
 	tbMw "turntable-build/middleware"
 )
 

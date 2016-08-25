@@ -1,6 +1,6 @@
 package jsonschema
 
-import "turntable-build/model"
+import "github.com/fujimisakari/turntable-build/model"
 
 type (
 	GetArtisteAPISchema struct {}
@@ -35,11 +35,11 @@ func (s GetArtisteAPISchema)GetResponseSchema() map[string]interface{} {
 		"properties": map[string]interface{}{
 			"artiste": map[string]interface{}{
 				"type":  "object",
-				"items": artiste.GetModelSchema(),
+				"items": artiste.ModelSchema(),
 			},
 			"team": map[string]interface{}{
 				"type":  "object",
-				"items": team.GetModelSchema(),
+				"items": team.ModelSchema(),
 			},
 		},
 		"required": []string{
@@ -71,7 +71,7 @@ func (s GetArtisteAllAPISchema)GetResponseSchema() map[string]interface{} {
 		"properties": map[string]interface{}{
 			"artistes": map[string]interface{}{
 				"type":  "array",
-				"items": artiste.GetModelSchema(),
+				"items": artiste.ModelSchema(),
 			},
 		},
 		"required": []string{
