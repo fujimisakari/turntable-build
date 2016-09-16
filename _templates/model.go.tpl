@@ -26,8 +26,9 @@ func ({{ .Self }} {{ .UpperName }}) ModelSchema() map[string]interface{} {
         "description": "{{ .Description }}",
         "type":        "object",
         "properties": map[string]interface{}{
-            {{ range $i, $p := .JsonSchemaProperties }}"{{ $p.Name }}": map[string]string{
+            {{ range $i, $p := .JsonSchemaProperties }}"{{ $p.Name }}": map[string]interface{}{
             "type": "{{ $p.Type }}",
+            "example": "{{ $p.Example }}",
             },
             {{ end }}
         },

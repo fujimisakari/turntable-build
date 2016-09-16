@@ -8,9 +8,11 @@ schema:
       model-type: int64
       json-name: id
       json-type: integer
+      json-example: "1"
 
     - db-column-name: name
       model-name: Name
       model-type: string
       json-name: name
       json-type: string
+      json-example: "DMC DJ Mixing ChanpionShip"

@@ -10,11 +10,13 @@ type (
 func (s GetArtisteAPISchema)GetRequestSchema() map[string]interface{} {
 	schema := map[string]interface{}{
 		"title":       "Artiste Request",
-		"description": "",
+		"description": "Artiste Request API description",
 		"type":        "object",
 		"properties": map[string]interface{}{
 			"id": map[string]string{
 				"type": "integer",
+				"example": "1",
+				"description": "Artiste ID",
 			},
 		},
 		"required": []string{
@@ -30,15 +32,15 @@ func (s GetArtisteAPISchema)GetResponseSchema() map[string]interface{} {
 	team := new(model.Team)
 	schema := map[string]interface{}{
 		"title":       "Artiste Response",
-		"description": "",
+		"description": "Artiste Response API description",
 		"type":        "object",
 		"properties": map[string]interface{}{
 			"artiste": map[string]interface{}{
-				"type":  "object",
+				"type":  "array",
 				"items": artiste.ModelSchema(),
 			},
 			"team": map[string]interface{}{
-				"type":  "object",
+				"type":  "array",
 				"items": team.ModelSchema(),
 			},
 		},
@@ -52,8 +54,8 @@ func (s GetArtisteAPISchema)GetResponseSchema() map[string]interface{} {
 
 func (s GetArtisteAllAPISchema)GetRequestSchema() map[string]interface{} {
 	schema := map[string]interface{}{
-		"title":       "Artiste Request",
-		"description": "",
+		"title":       "ArtisteAll Request",
+		"description": "ArtisteAll Request API description",
 		"type":        "object",
 		"properties": map[string]interface{}{},
 		"required": []string{},
@@ -66,7 +68,7 @@ func (s GetArtisteAllAPISchema)GetResponseSchema() map[string]interface{} {
 	artiste := new(model.Artiste)
 	schema := map[string]interface{}{
 		"title":       "ArtisteAll Response",
-		"description": "",
+		"description": "ArtisteAll Response API description",
 		"type":        "object",
 		"properties": map[string]interface{}{
 			"artistes": map[string]interface{}{

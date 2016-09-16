@@ -29,6 +29,7 @@ type ModelProperty struct {
 type JsonSchemaProperty struct {
 	Name string
 	Type string
+	Example string
 }
 
 type MapSchemaProperty struct {
@@ -110,6 +111,7 @@ func createContext(yamlPath string) Context {
 			js := JsonSchemaProperty{
 				c["json-name"].(string),
 				c["json-type"].(string),
+				c["json-example"].(string),
 			}
 			jsProperties[jIdx] = js
 			jIdx += 1

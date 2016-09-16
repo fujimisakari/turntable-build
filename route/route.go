@@ -5,9 +5,9 @@ import (
 	"github.com/fujimisakari/turntable-build/db"
 	tberr "github.com/fujimisakari/turntable-build/error"
 	"github.com/fujimisakari/turntable-build/jsonschema"
+	tbMw "github.com/fujimisakari/turntable-build/middleware"
 	"github.com/labstack/echo"
 	echoMw "github.com/labstack/echo/middleware"
-	tbMw "turntable-build/middleware"
 )
 
 func Init() *echo.Echo {
@@ -25,15 +25,22 @@ func Init() *echo.Echo {
 	}))
 	e.SetHTTPErrorHandler(tberr.JSONHTTPErrorHandler)
 
-	// Set Custom MiddleWare
-	e.Use(tbMw.JSONSchemaHandler(jsonschema.GetSchemaMapper()))
-	e.Use(tbMw.TransactionHandler(db.Init()))
-
 	// Routes
-	urlGroup := e.Group("/api")
+	apiGroup := e.Group("/api")
+	// Set Custom MiddleWare
+	apiGroup.Use(tbMw.JSONSchemaHandler(jsonschema.GetSchemaMapper()))
+	apiGroup.Use(tbMw.TransactionHandler(db.Init()))
 	{
-		urlGroup.GET("/artiste", api.GetArtisteAll())
-		urlGroup.GET("/artiste/:id", api.GetArtiste())
+		apiGroup.GET("/artiste", api.GetArtisteAll())
+		apiGroup.GET("/artiste/:id", api.GetArtiste())
 	}
+
+	// API Document Routes
+	apiDocGroup := e.Group("/api-doc")
+	{
+		apiDocGroup.GET("/url", api.GetAllURL())
+		apiDocGroup.GET("/schema", api.GetSchema())
+	}
+
 	return e
 }

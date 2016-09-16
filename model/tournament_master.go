@@ -26,11 +26,13 @@ func (t Tournament) ModelSchema() map[string]interface{} {
 		"description": "Tournament info api",
 		"type":        "object",
 		"properties": map[string]interface{}{
-			"id": map[string]string{
-				"type": "integer",
+			"id": map[string]interface{}{
+				"type":    "integer",
+				"example": "1",
 			},
-			"name": map[string]string{
-				"type": "string",
+			"name": map[string]interface{}{
+				"type":    "string",
+				"example": "DMC DJ Mixing ChanpionShip",
 			},
 		},
 	}

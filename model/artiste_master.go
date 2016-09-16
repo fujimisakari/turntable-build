@@ -27,11 +27,13 @@ func (a Artiste) ModelSchema() map[string]interface{} {
 		"description": "Artiste info api",
 		"type":        "object",
 		"properties": map[string]interface{}{
-			"id": map[string]string{
-				"type": "integer",
+			"id": map[string]interface{}{
+				"type":    "integer",
+				"example": "1",
 			},
-			"name": map[string]string{
-				"type": "string",
+			"name": map[string]interface{}{
+				"type":    "string",
+				"example": "Q-bert",
 			},
 		},
 	}
