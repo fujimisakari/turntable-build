@@ -36,11 +36,7 @@ func Init() *echo.Echo {
 	}
 
 	// API Document Routes
-	apiDocGroup := e.Group("/api-doc")
-	{
-		apiDocGroup.GET("/url", api.GetAllURL())
-		apiDocGroup.GET("/schema", api.GetSchema())
-	}
+	e.GET("/api/document", api.GetDocumentData())
 
 	return e
 }
