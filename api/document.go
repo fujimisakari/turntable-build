@@ -13,25 +13,39 @@ type dynamicMap map[string]interface{}
 
 func GetDocumentData() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
-		schemaMapper := jsonschema.GetSchemaMapper()
-		context := make(map[string]interface{})
+		schemaMappers := jsonschema.GetSchemaMapperForDocument()
+		context := make(dynamicMap)
 
-		// set URL Data
-		idx := 0
-		urlList := make([]string, len(schemaMapper))
-		for url, _ := range schemaMapper {
-			urlList[idx] = url
-			idx += 1
+		// set Method Data
+		apiMethods := []dynamicMap{}
+		for _, mapperWithGroup := range schemaMappers {
+			for group, mapper := range mapperWithGroup {
+				mapper := mapper.(map[string]interface{})
+				methods := make([]string, len(mapper))
+				idx := 0
+				for method, _ := range mapper {
+					methods[idx] = method
+					idx += 1
+				}
+
+				apiMethod := dynamicMap{"group": group, "methods": methods}
+				apiMethods = append(apiMethods, apiMethod)
+			}
 		}
-		context["urlList"] = urlList
+		context["apiMethods"] = apiMethods
 
 		// set Schema Data
 		schemaData := make(map[string]dynamicMap)
-		for url, apiSchema := range schemaMapper {
-			apiSchema := apiSchema.(jsonschema.APISchema)
-			schemaData[url] = dynamicMap{
-				"request":  createRequestDocSchema(apiSchema.GetRequestSchema()),
-				"response": createResponseDocSchema(apiSchema.GetResponseSchema()),
+		for _, mapperWithGroup := range schemaMappers {
+			for _, mapper := range mapperWithGroup {
+				mapper := mapper.(map[string]interface{})
+				for method, apiSchema := range mapper {
+					apiSchema := apiSchema.(jsonschema.APISchema)
+					schemaData[method] = dynamicMap{
+						"request":  createRequestDocSchema(apiSchema.GetRequestSchema()),
+						"response": createResponseDocSchema(apiSchema.GetResponseSchema()),
+					}
+				}
 			}
 		}
 		context["schemaData"] = schemaData
@@ -95,7 +109,7 @@ func getPropertiesByRecursion(docSchema dynamicMap, properties dynamicMap) dynam
 
 		case "object":
 			objSchema := make(dynamicMap)
-			docSchema[name] = getPropertiesByRecursion(objSchema, detail["properties"].(dynamicMap))
+			docSchema[name] = getPropertiesByRecursion(objSchema, detail["properties"].(map[string]interface{}))
 
 		default:
 			docSchema[name] = detail["example"]

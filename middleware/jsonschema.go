@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"strings"
 	"strconv"
 
 	"github.com/Sirupsen/logrus"
@@ -17,7 +18,8 @@ func JSONSchemaHandler(schemaMapper map[string]interface{}) echo.MiddlewareFunc 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return echo.HandlerFunc(func(c echo.Context) error {
 			// Define schema
-			apiSchema, ok := schemaMapper[c.Path()].(jsonschema.APISchema)
+			urlMethod := strings.Replace(c.Path(), "/api/", "", 1)
+			apiSchema, ok := schemaMapper[urlMethod].(jsonschema.APISchema)
 			if !ok {
 				logrus.Error("Dose not exsit SchemaMapper: ", c.Path())
 				jsonError := twerr.GetJSONError(fasthttp.StatusNotFound)

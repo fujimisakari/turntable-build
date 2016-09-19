@@ -35,14 +35,8 @@ func (s GetArtisteAPISchema)GetResponseSchema() map[string]interface{} {
 		"description": "Artiste Response API description",
 		"type":        "object",
 		"properties": map[string]interface{}{
-			"artiste": map[string]interface{}{
-				"type":  "array",
-				"items": artiste.ModelSchema(),
-			},
-			"team": map[string]interface{}{
-				"type":  "array",
-				"items": team.ModelSchema(),
-			},
+			"artiste": artiste.ModelSchema(),
+			"team": team.ModelSchema(),
 		},
 		"required": []string{
 			"artiste", "team",
