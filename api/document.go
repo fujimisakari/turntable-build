@@ -41,9 +41,12 @@ func GetDocumentData() echo.HandlerFunc {
 				mapper := mapper.(map[string]interface{})
 				for method, apiSchema := range mapper {
 					apiSchema := apiSchema.(jsonschema.APISchema)
+					reqSchema := apiSchema.GetRequestSchema()
 					schemaData[method] = dynamicMap{
-						"request":  createRequestDocSchema(apiSchema.GetRequestSchema()),
-						"response": createResponseDocSchema(apiSchema.GetResponseSchema()),
+						"title":       reqSchema["title"],
+						"description": reqSchema["description"],
+						"request":     createRequestDocSchema(reqSchema),
+						"response":    createResponseDocSchema(apiSchema.GetResponseSchema()),
 					}
 				}
 			}
@@ -79,8 +82,6 @@ func createRequestDocSchema(reqSchema dynamicMap) dynamicMap {
 	}
 
 	docSchema := dynamicMap{
-		"title":       reqSchema["title"],
-		"description": reqSchema["description"],
 		"arguments":   arguments,
 	}
 	return docSchema
