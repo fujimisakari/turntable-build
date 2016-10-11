@@ -16,37 +16,37 @@ func GetDocumentData() echo.HandlerFunc {
 		schemaMappers := jsonschema.GetSchemaMapperForDocument()
 		context := make(dynamicMap)
 
-		// set Method Data
-		apiMethods := []dynamicMap{}
+		// set URL Data
+		apiURLs := []dynamicMap{}
 		for _, mapperWithGroup := range schemaMappers {
-			for group, mapper := range mapperWithGroup {
+			for groupName, mapper := range mapperWithGroup {
 				mapper := mapper.(map[string]interface{})
-				methods := make([]string, len(mapper))
+				urls := make([]string, len(mapper))
 				idx := 0
-				for method, _ := range mapper {
-					methods[idx] = method
+				for url, _ := range mapper {
+					urls[idx] = url
 					idx += 1
 				}
 
-				apiMethod := dynamicMap{"group": group, "methods": methods}
-				apiMethods = append(apiMethods, apiMethod)
+				apiURL := dynamicMap{"name": groupName, "urls": urls}
+				apiURLs = append(apiURLs, apiURL)
 			}
 		}
-		context["apiMethods"] = apiMethods
+		context["apiURLs"] = apiURLs
 
 		// set Schema Data
 		schemaData := make(map[string]dynamicMap)
 		for _, mapperWithGroup := range schemaMappers {
 			for _, mapper := range mapperWithGroup {
 				mapper := mapper.(map[string]interface{})
-				for method, apiSchema := range mapper {
+				for url, apiSchema := range mapper {
 					apiSchema := apiSchema.(jsonschema.APISchema)
 					reqSchema := apiSchema.GetRequestSchema()
-					schemaData[method] = dynamicMap{
-						"title":       reqSchema["title"],
-						"description": reqSchema["description"],
-						"request":     createRequestDocSchema(reqSchema),
-						"response":    createResponseDocSchema(apiSchema.GetResponseSchema()),
+					schemaData[url] = dynamicMap{
+						"title":          reqSchema["title"],
+						"description":    reqSchema["description"],
+						"requestSchema":  createRequestDocSchema(reqSchema),
+						"responseSchema": createResponseDocSchema(apiSchema.GetResponseSchema()),
 					}
 				}
 			}
@@ -66,7 +66,7 @@ func createRequestDocSchema(reqSchema dynamicMap) dynamicMap {
 	for name, detail := range properties {
 		detail := detail.(map[string]string)
 		argument := make(map[string]string)
-		argument["argument"] = name
+		argument["name"] = name
 		argument["example"] = detail["example"]
 		argument["description"] = detail["description"]
 
@@ -82,7 +82,7 @@ func createRequestDocSchema(reqSchema dynamicMap) dynamicMap {
 	}
 
 	docSchema := dynamicMap{
-		"arguments":   arguments,
+		"arguments": arguments,
 	}
 	return docSchema
 }
