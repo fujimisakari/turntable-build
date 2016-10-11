@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -29,7 +30,7 @@ type ModelProperty struct {
 type JsonSchemaProperty struct {
 	Name string
 	Type string
-	Example string
+	Example interface{}
 }
 
 type MapSchemaProperty struct {
@@ -107,11 +108,16 @@ func createContext(yamlPath string) Context {
 	jIdx := 0
 	for _, cData := range columns {
 		c, _ := cData.(map[interface{}]interface{})
+		var jsonExample interface{}
+		jsonExample, ok := strconv.ParseInt(c["json-example"].(string), 0, 64)
+		if ok == nil {
+			jsonExample = c["json-example"].(string)
+		}
 		if c["json-name"] != nil {
 			js := JsonSchemaProperty{
 				c["json-name"].(string),
 				c["json-type"].(string),
-				c["json-example"].(string),
+				jsonExample,
 			}
 			jsProperties[jIdx] = js
 			jIdx += 1

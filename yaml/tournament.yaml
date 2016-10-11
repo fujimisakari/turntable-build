@@ -8,7 +8,7 @@ schema:
       model-type: int64
       json-name: id
       json-type: integer
-      json-example: "1"
+      json-example: 1
 
     - db-column-name: name
       model-name: Name
