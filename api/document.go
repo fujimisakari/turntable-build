@@ -17,7 +17,7 @@ func GetDocumentData() echo.HandlerFunc {
 		context := make(dynamicMap)
 
 		// set URL Data
-		apiURLs := []dynamicMap{}
+		urlGroups := []dynamicMap{}
 		for _, mapperWithGroup := range schemaMappers {
 			for groupName, mapper := range mapperWithGroup {
 				mapper := mapper.(map[string]interface{})
@@ -28,11 +28,11 @@ func GetDocumentData() echo.HandlerFunc {
 					idx += 1
 				}
 
-				apiURL := dynamicMap{"name": groupName, "urls": urls}
-				apiURLs = append(apiURLs, apiURL)
+				urlGroup := dynamicMap{"name": groupName, "urls": urls}
+				urlGroups = append(urlGroups, urlGroup)
 			}
 		}
-		context["apiURLs"] = apiURLs
+		context["urlGroups"] = urlGroups
 
 		// set Schema Data
 		schemaData := make(map[string]dynamicMap)
@@ -45,6 +45,7 @@ func GetDocumentData() echo.HandlerFunc {
 					schemaData[url] = dynamicMap{
 						"title":          reqSchema["title"],
 						"description":    reqSchema["description"],
+						"method":         reqSchema["method"],
 						"requestSchema":  createRequestDocSchema(reqSchema),
 						"responseSchema": createResponseDocSchema(apiSchema.GetResponseSchema()),
 					}
