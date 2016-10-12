@@ -11,6 +11,7 @@ func (s GetArtisteAPISchema)GetRequestSchema() map[string]interface{} {
 	schema := map[string]interface{}{
 		"title":       "Artiste Request",
 		"description": "Artiste Request API description",
+		"method":      "GET",
 		"type":        "object",
 		"properties": map[string]interface{}{
 			"id": map[string]string{
@@ -50,6 +51,7 @@ func (s GetArtisteAllAPISchema)GetRequestSchema() map[string]interface{} {
 	schema := map[string]interface{}{
 		"title":       "ArtisteAll Request",
 		"description": "ArtisteAll Request API description",
+		"method":      "GET",
 		"type":        "object",
 		"properties": map[string]interface{}{},
 		"required": []string{},
