@@ -110,19 +110,14 @@ func createContext(yamlPath string) Context {
 	for _, cData := range columns {
 		c, _ := cData.(map[interface{}]interface{})
 
-		fmt.Println("before jsonExample: ", c["json-example"])
 		var jsonExample interface{}
 		if s, ok := c["json-example"].(string); ok {
-			fmt.Println("string:", s)
 			jsonExample = s
 		} else if i, ok := c["json-example"].(int); ok {
-			fmt.Println("int:")
 			jsonExample = i
 		} else {
-			fmt.Println("other:")
 			jsonExample = c["json-example"]
 		}
-		fmt.Println("after jsonExample: ", jsonExample)
 
 		if c["json-name"] != nil {
 			js := JsonSchemaProperty{
