@@ -58,12 +58,12 @@ func main() {
 	context := createContext(yamlPath)
 
 	// Create model template
-	modelTplPath := fmt.Sprintf("%s/_templates/model.go.tpl", APP_PATH)
+	modelTplPath := fmt.Sprintf("%s/_code_generator/templates/model.go.tpl", APP_PATH)
 	outputModelPath := fmt.Sprintf("%s/model/%s_master.go", APP_PATH, target)
 	templateWriter(context, modelTplPath, outputModelPath)
 
 	// Create service template
-	serviceTplPath := fmt.Sprintf("%s/_templates/service.go.tpl", APP_PATH)
+	serviceTplPath := fmt.Sprintf("%s/_code_generator/templates/service.go.tpl", APP_PATH)
 	outputServicePath := fmt.Sprintf("%s/domain/%s/service_master.go", APP_PATH, target)
 	templateWriter(context, serviceTplPath, outputServicePath)
 }

@@ -24,8 +24,8 @@ migrate:
 code-generate:
 	for file in `ls $(GOPATH)/src/github.com/fujimisakari/turntable-build/yaml`; do \
 	  target=`basename $$file .yaml`; \
-	  echo "Code generate $${target}"; \
-	  go run $(GOPATH)/src/github.com/fujimisakari/turntable-build/_tools/template_generator.go $${target}; \
+	  echo "Code generate: $${target}"; \
+	  go run $(GOPATH)/src/github.com/fujimisakari/turntable-build/_code_generator/generate.go $${target}; \
 	  gofmt -w $(GOPATH)/src/github.com/fujimisakari/turntable-build/domain/$${target}/service_master.go; \
 	  gofmt -w $(GOPATH)/src/github.com/fujimisakari/turntable-build/model/$${target}_master.go; \
 	done
