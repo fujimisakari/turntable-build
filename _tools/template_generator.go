@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -28,8 +27,8 @@ type ModelProperty struct {
 }
 
 type JsonSchemaProperty struct {
-	Name string
-	Type string
+	Name    string
+	Type    string
 	Example interface{}
 }
 
@@ -38,6 +37,8 @@ type MapSchemaProperty struct {
 	JsonName  string
 	ModelName string
 }
+
+var APP_PATH = fmt.Sprintf("%s/src/github.com/fujimisakari/turntable-build", os.Getenv("GOPATH"))
 
 func main() {
 	args := os.Args
@@ -48,7 +49,7 @@ func main() {
 	target := args[1]
 
 	// Load yaml data
-	yamlPath := fmt.Sprintf("../yaml/%s.yaml", target)
+	yamlPath := fmt.Sprintf("%s/yaml/%s.yaml", APP_PATH, target)
 	if _, err := os.Stat(yamlPath); err != nil {
 		fmt.Println("Yaml File not found: ", yamlPath)
 		return
@@ -57,13 +58,13 @@ func main() {
 	context := createContext(yamlPath)
 
 	// Create model template
-	modelTplPath := "../_templates/model.go.tpl"
-	outputModelPath := fmt.Sprintf("../model/%s_master.go", target)
+	modelTplPath := fmt.Sprintf("%s/_templates/model.go.tpl", APP_PATH)
+	outputModelPath := fmt.Sprintf("%s/model/%s_master.go", APP_PATH, target)
 	templateWriter(context, modelTplPath, outputModelPath)
 
 	// Create service template
-	serviceTplPath := "../_templates/service.go.tpl"
-	outputServicePath := fmt.Sprintf("../domain/%s/service_master.go", target)
+	serviceTplPath := fmt.Sprintf("%s/_templates/service.go.tpl", APP_PATH)
+	outputServicePath := fmt.Sprintf("%s/domain/%s/service_master.go", APP_PATH, target)
 	templateWriter(context, serviceTplPath, outputServicePath)
 }
 
@@ -108,11 +109,21 @@ func createContext(yamlPath string) Context {
 	jIdx := 0
 	for _, cData := range columns {
 		c, _ := cData.(map[interface{}]interface{})
+
+		fmt.Println("before jsonExample: ", c["json-example"])
 		var jsonExample interface{}
-		jsonExample, ok := strconv.ParseInt(c["json-example"].(string), 0, 64)
-		if ok == nil {
-			jsonExample = c["json-example"].(string)
+		if s, ok := c["json-example"].(string); ok {
+			fmt.Println("string:", s)
+			jsonExample = s
+		} else if i, ok := c["json-example"].(int); ok {
+			fmt.Println("int:")
+			jsonExample = i
+		} else {
+			fmt.Println("other:")
+			jsonExample = c["json-example"]
 		}
+		fmt.Println("after jsonExample: ", jsonExample)
+
 		if c["json-name"] != nil {
 			js := JsonSchemaProperty{
 				c["json-name"].(string),
